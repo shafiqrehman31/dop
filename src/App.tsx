@@ -19,7 +19,7 @@ import { CmsEditor } from './components/admin/CmsEditor';
 import { CrmSettings } from './components/admin/CrmSettings';
 import { SecuritySettings } from './components/admin/SecuritySettings';
 
-import { CmsContent, Lead } from './types';
+import { CmsContent, Lead, DEFAULT_CMS } from './types';
 import { getCms, getLeads, verifyCurrentAuth } from './services/api';
 
 export default function App() {
@@ -32,9 +32,8 @@ export default function App() {
     return '/';
   });
 
-  // CMS content state
-  const [cms, setCms] = useState<CmsContent | null>(null);
-  const [cmsLoading, setCmsLoading] = useState(true);
+  // CMS content state with default fallback for instant zero-latency loading
+  const [cms, setCms] = useState<CmsContent>(DEFAULT_CMS);
 
   // Quiz Modal state
   const [quizOpen, setQuizOpen] = useState(false);
@@ -71,15 +70,13 @@ export default function App() {
     };
   }, []);
 
-  // Fetch initial CMS content
+  // Fetch dynamic CMS content from server in background
   const loadCmsData = async () => {
     try {
       const data = await getCms();
-      setCms(data);
+      if (data) setCms(data);
     } catch (err) {
-      console.error('Error fetching CMS:', err);
-    } finally {
-      setCmsLoading(false);
+      console.warn('Falling back to default built-in CMS content:', err);
     }
   };
 
@@ -142,8 +139,8 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // If loading CMS initially
-  if (cmsLoading || !cms) {
+  // If cms is somehow not available
+  if (!cms) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">
         <div className="flex flex-col items-center gap-3">

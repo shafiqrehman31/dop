@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { ArrowRight, CheckCircle2, Shield, Scale, Clock, Award } from 'lucide-react';
 import { CmsContent } from '../types';
+import heroBackdropImg from '../assets/images/hero_london_residential_backdrop_1790957970822.jpg';
+import heroHomeImg from '../assets/images/hero_tenancy_home_1790954635400.jpg';
 
 interface HeroProps {
   cms: CmsContent;
@@ -21,7 +23,7 @@ export const Hero: React.FC<HeroProps> = ({ cms, onStartQuiz, onScrollTo }) => {
       {/* Real High-Resolution British Residential Background Image */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <img
-          src="/src/assets/images/hero_london_residential_backdrop_1790957970822.jpg"
+          src={heroBackdropImg}
           alt="London residential architecture at twilight"
           className="w-full h-full object-cover object-center filter brightness-[0.82] contrast-[1.05]"
           referrerPolicy="no-referrer"
@@ -250,7 +252,7 @@ export const Hero: React.FC<HeroProps> = ({ cms, onStartQuiz, onScrollTo }) => {
             {/* Residential Visual Asset banner */}
             <div className="rounded-xl overflow-hidden border border-slate-800 relative h-36 sm:h-44 group">
               <img
-                src="/src/assets/images/hero_tenancy_home_1790954635400.jpg"
+                src={heroHomeImg}
                 alt="UK Residential tenancy property"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 referrerPolicy="no-referrer"

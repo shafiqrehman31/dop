@@ -1,6 +1,9 @@
 import React from 'react';
 import { ShieldCheck, Scale, AlertOctagon, FileCheck, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import { CmsContent } from '../types';
+import heroBackdropImg from '../assets/images/hero_london_residential_backdrop_1790957970822.jpg';
+import featureProtectionImg from '../assets/images/feature_deposit_protection_1790954652855.jpg';
+import featureAdvisoryImg from '../assets/images/feature_legal_advisory_1790954663501.jpg';
 
 interface ServicesOverviewProps {
   cms: CmsContent;
@@ -13,7 +16,7 @@ export const ServicesOverview: React.FC<ServicesOverviewProps> = ({ cms, onOpenQ
       {/* Background Architectural Backdrop Image */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <img
-          src="/src/assets/images/hero_london_residential_backdrop_1790957970822.jpg"
+          src={heroBackdropImg}
           alt="London residential architecture backdrop"
           className="w-full h-full object-cover object-center filter brightness-[0.70] contrast-[1.05]"
           referrerPolicy="no-referrer"
@@ -86,7 +89,7 @@ export const ServicesOverview: React.FC<ServicesOverviewProps> = ({ cms, onOpenQ
           <div className="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden flex flex-col justify-between hover:border-slate-700 transition-colors">
             <div className="h-44 overflow-hidden relative">
               <img
-                src="/src/assets/images/feature_deposit_protection_1790954652855.jpg"
+                src={featureProtectionImg}
                 alt="Deposit protection document and keys"
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
@@ -115,7 +118,7 @@ export const ServicesOverview: React.FC<ServicesOverviewProps> = ({ cms, onOpenQ
           <div className="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden flex flex-col justify-between hover:border-slate-700 transition-colors">
             <div className="h-44 overflow-hidden relative">
               <img
-                src="/src/assets/images/feature_legal_advisory_1790954663501.jpg"
+                src={featureAdvisoryImg}
                 alt="UK legal claims specialist consultation"
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"

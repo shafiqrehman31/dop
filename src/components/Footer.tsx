@@ -2,6 +2,7 @@ import React from 'react';
 import { Scale, ShieldCheck, FileText, Lock, BookOpen } from 'lucide-react';
 import { CmsContent } from '../types';
 import { LegalDocType } from './LegalModal';
+import heroBackdropImg from '../assets/images/hero_london_residential_backdrop_1790957970822.jpg';
 
 interface FooterProps {
   cms: CmsContent;
@@ -16,7 +17,7 @@ export const Footer: React.FC<FooterProps> = ({ cms, onScrollTo, onOpenQuiz, onO
       {/* Background Architectural Backdrop Image */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <img
-          src="/src/assets/images/hero_london_residential_backdrop_1790957970822.jpg"
+          src={heroBackdropImg}
           alt="London residential architecture backdrop"
           className="w-full h-full object-cover object-bottom filter brightness-[0.60] contrast-[1.05]"
           referrerPolicy="no-referrer"

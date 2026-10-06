@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Send, CheckCircle2, Phone, Mail, MapPin, ShieldCheck, Scale } from 'lucide-react';
 import { CmsContent } from '../types';
 import { submitLead } from '../services/api';
+import heroBackdropImg from '../assets/images/hero_london_residential_backdrop_1790957970822.jpg';
 
 interface InquiryFormProps {
   cms: CmsContent;
@@ -70,7 +71,7 @@ export const InquiryForm: React.FC<InquiryFormProps> = ({ cms, onSuccessSubmitte
       {/* Background Architectural Backdrop Image */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <img
-          src="/src/assets/images/hero_london_residential_backdrop_1790957970822.jpg"
+          src={heroBackdropImg}
           alt="London residential architecture backdrop"
           className="w-full h-full object-cover object-center filter brightness-[0.70] contrast-[1.05]"
           referrerPolicy="no-referrer"

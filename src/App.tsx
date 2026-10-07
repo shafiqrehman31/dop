@@ -23,13 +23,25 @@ import { CmsContent, Lead, DEFAULT_CMS } from './types';
 import { getCms, getLeads, verifyCurrentAuth } from './services/api';
 
 export default function App() {
+  // Configurable admin slug (defaults to 'admin', supports VITE_ADMIN_PATH e.g. 'portal', 'staff', 'secure-desk')
+  const customAdminSlug = (import.meta.env.VITE_ADMIN_PATH || 'admin').replace(/^\/+/, '').toLowerCase();
+
+  const checkIsAdminRoute = () => {
+    const hash = window.location.hash.replace('#', '').replace(/^\/+/, '').toLowerCase();
+    const path = window.location.pathname.replace(/^\/+/, '').toLowerCase();
+    return (
+      hash.startsWith(customAdminSlug) ||
+      path.startsWith(customAdminSlug) ||
+      hash.startsWith('admin') ||
+      path.startsWith('admin') ||
+      hash.startsWith('portal') ||
+      path.startsWith('portal')
+    );
+  };
+
   // Navigation / Route state
   const [currentPath, setCurrentPath] = useState<string>(() => {
-    const hash = window.location.hash.replace('#', '');
-    const path = window.location.pathname;
-    if (hash.startsWith('/admin') || hash === 'admin') return '/admin';
-    if (path.startsWith('/admin')) return '/admin';
-    return '/';
+    return checkIsAdminRoute() ? '/admin' : '/';
   });
 
   // CMS content state with default fallback for instant zero-latency loading
@@ -53,9 +65,7 @@ export default function App() {
   // Listen to hash / url changes
   useEffect(() => {
     const handleUrlChange = () => {
-      const hash = window.location.hash.replace('#', '');
-      const path = window.location.pathname;
-      if (hash.startsWith('/admin') || hash === 'admin' || path.startsWith('/admin')) {
+      if (checkIsAdminRoute()) {
         setCurrentPath('/admin');
       } else {
         setCurrentPath('/');
@@ -99,6 +109,7 @@ export default function App() {
   }, [currentPath]);
 
   const loadAdminLeads = async () => {
+    if (!adminUser) return;
     try {
       const leads = await getLeads();
       setAdminLeads(leads);
@@ -129,7 +140,7 @@ export default function App() {
   };
 
   const navigateToAdmin = () => {
-    window.location.hash = '/admin';
+    window.location.hash = `/${customAdminSlug}`;
     setCurrentPath('/admin');
   };
 
@@ -240,7 +251,7 @@ export default function App() {
       {/* Integrated Contact & Case Review Inquiry Form */}
       <InquiryForm
         cms={cms}
-        onSuccessSubmitted={loadAdminLeads}
+        onSuccessSubmitted={adminUser ? loadAdminLeads : undefined}
       />
 
       {/* FAQs Section */}
@@ -263,7 +274,7 @@ export default function App() {
         initialDeposit={initialQuizDeposit}
         initialRenewals={initialQuizRenewals}
         initialBreach={initialQuizBreach}
-        onSuccessSubmitted={loadAdminLeads}
+        onSuccessSubmitted={adminUser ? loadAdminLeads : undefined}
       />
 
       {/* Legal Pages Modal (Privacy, Terms, Complaints, Cookies) */}

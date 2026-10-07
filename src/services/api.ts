@@ -85,12 +85,26 @@ export async function trackQuizStart(): Promise<void> {
 }
 
 export async function getLeads(): Promise<Lead[]> {
-  const res = await fetch('/api/leads', {
-    headers: authHeaders(),
-  });
-  if (!res.ok) throw new Error('Failed to fetch leads');
-  const data = await res.json();
-  return data.leads;
+  const token = getAuthToken();
+  if (!token) {
+    return [];
+  }
+  try {
+    const res = await fetch('/api/leads', {
+      headers: authHeaders(),
+    });
+    if (!res.ok) {
+      if (res.status === 401) {
+        clearAuthToken();
+        return [];
+      }
+      throw new Error('Failed to fetch leads');
+    }
+    const data = await res.json();
+    return data.leads || [];
+  } catch {
+    return [];
+  }
 }
 
 export async function updateLead(id: string, updates: { status?: Lead['status']; notes?: string }): Promise<Lead> {
@@ -236,14 +250,18 @@ export async function logout(): Promise<void> {
   }
 }
 
-export async function updateMfaSettings(enableMfa: boolean, newPassword?: string): Promise<any> {
+export async function updateMfaSettings(
+  enableMfa: boolean, 
+  newPassword?: string, 
+  newUsername?: string
+): Promise<any> {
   const res = await fetch('/api/auth/mfa-settings', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       ...authHeaders(),
     },
-    body: JSON.stringify({ enableMfa, newPassword }),
+    body: JSON.stringify({ enableMfa, newPassword, newUsername }),
   });
   if (!res.ok) throw new Error('Failed to update security settings');
   return res.json();

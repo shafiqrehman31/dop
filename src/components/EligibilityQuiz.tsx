@@ -763,7 +763,7 @@ export const EligibilityQuiz: React.FC<EligibilityQuizProps> = ({
                         I confirm the information provided is accurate and consent to Deposit Claim regulated legal partners conducting free tenancy deposit scheme searches on my behalf under a No Win, No Fee agreement.
                       </span>
                     </label>
-                  </div>
+                  </div> 
 
                   {errorMsg && (
                     <div className="p-3 bg-red-950/60 border border-red-800 rounded-lg text-xs text-red-300">

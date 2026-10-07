@@ -1,6 +1,7 @@
-import app from './api/app';
+import app from './api/index';
 import path from 'path';
-import express, { Request, Response } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);

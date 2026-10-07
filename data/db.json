@@ -1,16 +1,16 @@
 {
   "cms": {
-    "siteName": "Deposit Hero",
+    "siteName": "Deposit Claim",
     "tagline": "UK Tenancy Deposit Claim Specialists",
-    "contactEmail": "claims@mydeposithero.co.uk",
+    "contactEmail": "claims@mydeposit-claim.co.uk",
     "contactPhone": "0800 048 5321",
     "officeAddress": "124 City Road, London, EC1V 2NX, United Kingdom",
     "heroBadge": "Regulated Tenancy Deposit Recovery Specialists",
     "heroHeadline": "Claim up to 3x your tenancy deposit compensation.",
     "heroSubtitle": "Under the UK Housing Act 2004, if your landlord failed to protect your deposit in an approved scheme within 30 days or provide prescribed information, you could be legally owed £1,000s in compensation. 100% No Win No Fee.",
     "ctaText": "Check Eligibility in 60s",
-    "logoUrl": "",
-    "faviconUrl": "",
+    "logoUrl": "data:image/png;base64,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",
+    "faviconUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAudJREFUeNrsWu1xozAQNZn8P0qgg6iD4yo4l6AO4hLcASVQgn0V2KkApwKSCkgHOumyzGAfH7titSZBb0bDjxBJ+1ZIb5+82URERERERESsFcmSJmOMSe1ja9tv29IkSX6tJhM2+J1tjelgTcGXpgdrCb4wA1hD8LkZwRoIOK2WABtfZiYgMY+HO3KQLyER9yQgw+wR35mAzdpXwCLwyLGZwXIeWq5n2y5W1n5wHJswzpOTyrYpeLbjOLzAeMegmh2ka2XwcO9q0Puuj/3E+wcYJ4V3a0NDAwpTcQe+v9XsHhPTIwT8+zuMpz0C78MJVipvsTITfX25YBUQfTK8cOPtfLN+MOFRwViKmehblNTgK8Hg88DBt8iXFHwDslgJBa9ZChXObAABiwp+LxR8IUh2wValDRwzGrKp4LkFs6MeWfop/B8FNSQo65m3HiCTtPGVxM1LeR6h7VlPOef3rZBCGC2NT/CU7JfE47S7yTUdocP7/V5v4oWP2MHg4CmmWhLab/8QIvg5aq9CHlvpnIIGWhqSbN/JiWVjyhDtIAsZ84OH+8JVZmLGO9uy9m1JhsiRo64n4I+kI4TJyKuwYXP+zpbYz6kX7Gq7RE9QkAAM2z8kbXFpAjCbG4tPD/J5ioC3Ja4AxXQuPyPekSUAjjcMCZoh+5g+Xlq5LKkEC6Q6U579U1wm1VGLpRQBGaEmzzz6x5badY9RQq0+8/ZugTpJrDvjiqItIfMU10eDodLnP+SIJJa3hiu1ZKU6NEXfZwF9US9SaoRR0nWgMnjqkfKaTEJh/FHN9PjyQJ4kngRBS/w/49LTkwxCgpRVfbXJCTjEJ18fL+ikOtdiIncR1KOxCp35AUf3fvcDfQ5rgMnsRkgPcTus5wqlnGliJUZIMf4+ADWej8qiZqDwVJDa4zOswOYfHS+ZSUQKJbIacHg+wEZz5uaZQ6pvPn9O/3RTTrvK8R3GcwXdRdi7jIiIiIiIiPiC+CvAAEo8DpIaA8s1AAAAAElFTkSuQmCC",
     "stats": {
       "claimsRecovered": "£4.2M+",
       "successRate": "98.4%",
@@ -74,9 +74,32 @@
         "answer": "Under the Limitation Act 1980, you have up to 6 years from the date your deposit should have been protected (30 days after you paid it) to bring a claim, even if you moved out years ago."
       }
     ],
-    "legalDisclaimer": "Deposit Hero is a dedicated legal intake portal working alongside SRA-regulated solicitors in England and Wales. Regulated services are governed by the Solicitors Regulation Authority. 100% No Win No Fee agreements are subject to solicitor assessment."
+    "legalDisclaimer": "Deposit Claim is a dedicated legal intake portal working alongside SRA-regulated solicitors in England and Wales. Regulated services are governed by the Solicitors Regulation Authority. 100% No Win No Fee agreements are subject to solicitor assessment."
   },
   "leads": [
+    {
+      "id": "lead-692920",
+      "source": "quiz",
+      "createdAt": "2026-10-07T13:44:52.920Z",
+      "name": "Charanjit Singh",
+      "email": "info@123fooddel.com",
+      "phone": "030000",
+      "postcode": "SW11 4NU",
+      "depositAmount": 1200,
+      "tenancyDurationMonths": 12,
+      "renewalsCount": 1,
+      "propertyLocation": "england_wales",
+      "paidWithinSixYears": true,
+      "protectedWithin30Days": "late",
+      "receivedPrescribedInfo": "no",
+      "hasTenancyAgreement": "yes",
+      "tenancyStatus": "moved_out",
+      "estimatedCompensationMin": 2400,
+      "estimatedCompensationMax": 4800,
+      "status": "new",
+      "pipedriveSynced": false,
+      "ipAddress": "127.0.0.1"
+    },
     {
       "id": "lead-MUR4DRIR-559",
       "source": "quiz",
@@ -209,7 +232,7 @@
   },
   "admin": {
     "username": "admin",
-    "passwordHash": "bff1378ef883d4fb40c5a9a7bbca19f3821ecfa5fcd9972cb477ed2f8773ecb9",
+    "passwordHash": "b3f566432a3b2a674a37577f4aa3200bcad87bce8a1e1077e5bea96a71030cd4",
     "mfaEnabled": true,
     "mfaSecret": "JBSWY3DPEHPK3PXP",
     "backupCodes": [
@@ -222,8 +245,8 @@
   },
   "analyticsLog": {
     "visitorsToday": 142,
-    "quizStarts": 38,
-    "quizCompletions": 27,
+    "quizStarts": 42,
+    "quizCompletions": 28,
     "lastReset": "2026-10-02"
   }
 }

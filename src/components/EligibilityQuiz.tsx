@@ -156,7 +156,7 @@ export const EligibilityQuiz: React.FC<EligibilityQuizProps> = ({
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-blue-500" />
             <span className="text-sm font-bold text-white tracking-tight">
-              Deposit Hero Claim Eligibility Checker
+              Deposit Claim Eligibility Checker
             </span>
           </div>
 
@@ -760,7 +760,7 @@ export const EligibilityQuiz: React.FC<EligibilityQuizProps> = ({
                         className="mt-0.5 w-4 h-4 rounded border-slate-700 text-blue-600 focus:ring-blue-500"
                       />
                       <span className="text-[11px] text-slate-400 leading-normal">
-                        I confirm the information provided is accurate and consent to Deposit Hero's regulated legal partners conducting free tenancy deposit scheme searches on my behalf under a No Win, No Fee agreement.
+                        I confirm the information provided is accurate and consent to Deposit Claim regulated legal partners conducting free tenancy deposit scheme searches on my behalf under a No Win, No Fee agreement.
                       </span>
                     </label>
                   </div>

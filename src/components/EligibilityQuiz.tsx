@@ -125,7 +125,8 @@ export const EligibilityQuiz: React.FC<EligibilityQuizProps> = ({
         estimatedCompensationMax: estimatedMax,
       });
 
-      setSubmittedLeadId(res.leadId);
+      const leadRef = res.leadId || (res as any)?.lead?.id || `DH-${Date.now().toString().slice(-6)}`;
+      setSubmittedLeadId(leadRef);
       if (onSuccessSubmitted) onSuccessSubmitted();
     } catch (err: any) {
       setErrorMsg(err.message || 'Submission failed. Please try again.');

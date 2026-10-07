@@ -57,7 +57,13 @@ export const InquiryForm: React.FC<InquiryFormProps> = ({ cms, onSuccessSubmitte
         estimatedCompensationMax: deposit * (protectionStatus === 'no' ? 3 : 2),
       });
 
-      setSubmittedLeadId(res.leadId);
+      const leadRef = res.leadId || (res as any)?.lead?.id || `DH-${Date.now().toString().slice(-6)}`;
+      setSubmittedLeadId(leadRef);
+      setName('');
+      setEmail('');
+      setPhone('');
+      setPostcode('');
+      setMessage('');
       if (onSuccessSubmitted) onSuccessSubmitted();
     } catch (err: any) {
       setErrorMsg(err.message || 'Error submitting inquiry. Please try again.');

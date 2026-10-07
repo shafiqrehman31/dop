@@ -64,8 +64,8 @@ export async function uploadAsset(type: 'logo' | 'favicon', dataUrl: string): Pr
 export async function submitLead(payload: Partial<Lead>): Promise<{
   success: boolean;
   leadId: string;
-  estimatedCompensationMin: number;
-  estimatedCompensationMax: number;
+  lead?: Lead;
+  compensation?: any;
 }> {
   const res = await fetch('/api/leads', {
     method: 'POST',
@@ -73,7 +73,12 @@ export async function submitLead(payload: Partial<Lead>): Promise<{
     body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error('Submission failed. Please check your network and try again.');
-  return res.json();
+  const data = await res.json();
+  const leadId = data.leadId || data.lead?.id || `DH-${Date.now().toString().slice(-6)}`;
+  return {
+    ...data,
+    leadId,
+  };
 }
 
 export async function trackQuizStart(): Promise<void> {

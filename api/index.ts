@@ -329,15 +329,20 @@ let db: Database = {
   },
 };
 
-if (fs.existsSync(DB_FILE)) {
-  try {
-    const raw = fs.readFileSync(DB_FILE, 'utf-8');
-    const parsed = JSON.parse(raw);
-    db = { ...db, ...parsed };
-  } catch (err) {
-    console.error('Error loading db.json, using default database', err);
+function getDb(): Database {
+  if (fs.existsSync(DB_FILE)) {
+    try {
+      const raw = fs.readFileSync(DB_FILE, 'utf-8');
+      const parsed = JSON.parse(raw);
+      db = { ...db, ...parsed };
+    } catch (err) {
+      console.error('Error loading db.json:', err);
+    }
   }
+  return db;
 }
+
+getDb();
 
 function saveDb() {
   try {
@@ -457,12 +462,14 @@ app.post(['/api/leads', '/leads'], (req: Request, res: Response) => {
     ipAddress: req.ip || (req.headers['x-forwarded-for'] as string) || '127.0.0.1',
   };
 
+  getDb();
   db.leads.unshift(newLead);
   db.analyticsLog.quizCompletions += 1;
   saveDb();
 
   res.status(201).json({
     success: true,
+    leadId: newLead.id,
     lead: newLead,
     compensation: {
       min: minComp,
@@ -473,8 +480,9 @@ app.post(['/api/leads', '/leads'], (req: Request, res: Response) => {
 });
 
 app.get(['/api/leads', '/leads'], requireAuth, (req: Request, res: Response) => {
+  const currentDb = getDb();
   const { status, source, search } = req.query;
-  let filtered = [...db.leads];
+  let filtered = [...currentDb.leads];
 
   if (status && status !== 'all') {
     filtered = filtered.filter((l) => l.status === status);

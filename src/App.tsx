@@ -100,7 +100,6 @@ export default function App() {
       verifyCurrentAuth().then((res) => {
         if (res && res.user) {
           setAdminUser(res.user);
-          loadAdminLeads();
         } else {
           setAdminUser(null);
         }
@@ -108,8 +107,14 @@ export default function App() {
     }
   }, [currentPath]);
 
+  // Automatically fetch leads whenever authenticated as admin
+  useEffect(() => {
+    if (adminUser) {
+      loadAdminLeads();
+    }
+  }, [adminUser]);
+
   const loadAdminLeads = async () => {
-    if (!adminUser) return;
     try {
       const leads = await getLeads();
       setAdminLeads(leads);

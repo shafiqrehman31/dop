@@ -20,7 +20,7 @@ import { CrmSettings } from './components/admin/CrmSettings';
 import { SecuritySettings } from './components/admin/SecuritySettings';
 
 import { CmsContent, Lead, DEFAULT_CMS } from './types';
-import { getCms, getLeads, verifyCurrentAuth } from './services/api';
+import { getCms, getLeads, verifyCurrentAuth, getCachedCms, saveCachedCms } from './services/api';
 
 export default function App() {
   // Configurable admin slug (defaults to 'admin', supports VITE_ADMIN_PATH e.g. 'portal', 'staff', 'secure-desk')
@@ -44,8 +44,11 @@ export default function App() {
     return checkIsAdminRoute() ? '/admin' : '/';
   });
 
-  // CMS content state with default fallback for instant zero-latency loading
-  const [cms, setCms] = useState<CmsContent>(DEFAULT_CMS);
+  // CMS content state with permanent cached fallback for instant zero-latency loading
+  const [cms, setCms] = useState<CmsContent>(() => {
+    const cached = getCachedCms();
+    return cached ? { ...DEFAULT_CMS, ...cached } : DEFAULT_CMS;
+  });
 
   // Quiz Modal state
   const [quizOpen, setQuizOpen] = useState(false);
@@ -185,6 +188,7 @@ export default function App() {
       <AdminLayout
         activeTab={adminTab}
         onSelectTab={setAdminTab}
+        cms={cms}
         onLogout={() => {
           setAdminUser(null);
           navigateToHome();

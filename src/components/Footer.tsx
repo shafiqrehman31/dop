@@ -33,29 +33,25 @@ export const Footer: React.FC<FooterProps> = ({ cms, onScrollTo, onOpenQuiz, onO
           
           {/* Brand & Mission (4 cols) */}
           <div className="md:col-span-4 space-y-4">
-                      <div className="flex items-center gap-3">
-                        <a
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                          }}
-                          className="flex items-center gap-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg py-1"
-                        >
-                          {cms.logoUrl ? (
-                            <img
-                              src={cms.logoUrl}
-                              alt={cms.siteName}
-                              className="h-9 w-auto max-w-[180px] object-contain"
-                              referrerPolicy="no-referrer"
-                            />
-                          ) : (
-                            <div className="flex items-center gap-2.5">
-                              
-                            </div>
-                          )}
-                        </a>
-                      </div>
+            <div className="flex items-center gap-2.5">
+              {cms.logoUrl ? (
+                <img
+                  src={cms.logoUrl}
+                  alt={cms.siteName}
+                  className="h-8 w-auto max-w-[160px] object-contain filter brightness-95"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <>
+                  <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
+                    <Scale className="w-4 h-4" />
+                  </div>
+                  <span className="text-lg font-bold text-white font-display">
+                    {cms.siteName}
+                  </span>
+                </>
+              )}
+            </div>
 
             <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
               Specialist tenancy deposit compensation claims portal helping UK tenants recover up to 3x statutory compensation for unprotected, late, or non-compliant tenancy deposits under the Housing Act 2004.

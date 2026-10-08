@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Save, Upload, Image, Check, AlertCircle, RefreshCw, 
   Trash2, Plus, Sparkles, FileText, Globe
 } from 'lucide-react';
 import { CmsContent } from '../../types';
 import { updateCms, uploadAsset } from '../../services/api';
+import { compressImage } from '../../utils/imageOptimizer';
 
 interface CmsEditorProps {
   cms: CmsContent;
@@ -17,6 +18,12 @@ export const CmsEditor: React.FC<CmsEditorProps> = ({ cms, onCmsUpdated }) => {
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isUploadingFavicon, setIsUploadingFavicon] = useState(false);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (cms) {
+      setFormData(cms);
+    }
+  }, [cms]);
 
   const handleInputChange = (field: keyof CmsContent, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -62,56 +69,81 @@ export const CmsEditor: React.FC<CmsEditorProps> = ({ cms, onCmsUpdated }) => {
     }));
   };
 
-  // Logo file upload handler
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Logo file upload handler with automatic high-res compression & instant permanent save
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsUploadingLogo(true);
-    const reader = new FileReader();
-    reader.onload = async () => {
-      try {
-        const dataUrl = reader.result as string;
-        await uploadAsset('logo', dataUrl);
-        setFormData((prev) => ({ ...prev, logoUrl: dataUrl }));
-        setSaveStatus('Logo uploaded and applied successfully!');
-      } catch (err: any) {
-        setSaveStatus('Error uploading logo.');
-      } finally {
-        setIsUploadingLogo(false);
-      }
-    };
-    reader.readAsDataURL(file);
+    setSaveStatus(null);
+    try {
+      // Compress to high-res, lightweight WebP/PNG (~20KB) so it permanently fits in storage
+      const dataUrl = await compressImage(file, 380, 120);
+      const updated = { ...formData, logoUrl: dataUrl };
+      setFormData(updated);
+      onCmsUpdated(updated);
+      
+      // Save permanently to both client and server immediately
+      await updateCms(updated);
+      await uploadAsset('logo', dataUrl);
+      setSaveStatus('✓ Brand logo uploaded, permanently saved, and published live across the site!');
+    } catch (err: any) {
+      setSaveStatus(err.message || 'Error processing logo image.');
+    } finally {
+      setIsUploadingLogo(false);
+      // Reset input value to allow re-uploading same file
+      e.target.value = '';
+    }
   };
 
   // Favicon file upload handler
-  const handleFaviconUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFaviconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsUploadingFavicon(true);
-    const reader = new FileReader();
-    reader.onload = async () => {
-      try {
-        const dataUrl = reader.result as string;
-        await uploadAsset('favicon', dataUrl);
-        setFormData((prev) => ({ ...prev, faviconUrl: dataUrl }));
-        // Also update runtime document favicon
-        let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
-        if (!link) {
-          link = document.createElement('link');
-          link.rel = 'icon';
-          document.getElementsByTagName('head')[0].appendChild(link);
-        }
-        link.href = dataUrl;
-        setSaveStatus('Favicon uploaded and applied to browser tab!');
-      } catch (err: any) {
-        setSaveStatus('Error uploading favicon.');
-      } finally {
-        setIsUploadingFavicon(false);
+    setSaveStatus(null);
+    try {
+      const dataUrl = await compressImage(file, 64, 64);
+      const updated = { ...formData, faviconUrl: dataUrl };
+      setFormData(updated);
+      onCmsUpdated(updated);
+
+      // Update runtime document favicon
+      let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.getElementsByTagName('head')[0].appendChild(link);
       }
-    };
-    reader.readAsDataURL(file);
+      link.href = dataUrl;
+
+      // Save permanently to both client and server immediately
+      await updateCms(updated);
+      await uploadAsset('favicon', dataUrl);
+      setSaveStatus('✓ Favicon uploaded, permanently saved, and applied live!');
+    } catch (err: any) {
+      setSaveStatus(err.message || 'Error processing favicon.');
+    } finally {
+      setIsUploadingFavicon(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    const updated = { ...formData, logoUrl: '' };
+    setFormData(updated);
+    onCmsUpdated(updated);
+    await updateCms(updated);
+    setSaveStatus('✓ Custom logo removed and default brand emblem restored live.');
+  };
+
+  const handleRemoveFavicon = async () => {
+    const updated = { ...formData, faviconUrl: '' };
+    setFormData(updated);
+    onCmsUpdated(updated);
+    await updateCms(updated);
+    setSaveStatus('✓ Custom favicon removed and default restored.');
   };
 
   const handleSaveAll = async (e: React.FormEvent) => {
@@ -121,7 +153,7 @@ export const CmsEditor: React.FC<CmsEditorProps> = ({ cms, onCmsUpdated }) => {
     try {
       const updated = await updateCms(formData);
       onCmsUpdated(updated);
-      setSaveStatus('CMS content saved and published live across the site!');
+      setSaveStatus('✓ All website content, copy, and branding permanently saved and published live!');
     } catch (err: any) {
       setSaveStatus(err.message || 'Error updating CMS content');
     } finally {
@@ -209,8 +241,8 @@ export const CmsEditor: React.FC<CmsEditorProps> = ({ cms, onCmsUpdated }) => {
               {formData.logoUrl && (
                 <button
                   type="button"
-                  onClick={() => setFormData((prev) => ({ ...prev, logoUrl: '' }))}
-                  className="p-2 text-red-400 hover:bg-red-950/40 rounded-lg transition-colors"
+                  onClick={handleRemoveLogo}
+                  className="p-2 text-red-400 hover:bg-red-950/40 rounded-lg transition-colors cursor-pointer"
                   title="Remove Custom Logo"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -255,8 +287,8 @@ export const CmsEditor: React.FC<CmsEditorProps> = ({ cms, onCmsUpdated }) => {
               {formData.faviconUrl && (
                 <button
                   type="button"
-                  onClick={() => setFormData((prev) => ({ ...prev, faviconUrl: '' }))}
-                  className="p-2 text-red-400 hover:bg-red-950/40 rounded-lg transition-colors"
+                  onClick={handleRemoveFavicon}
+                  className="p-2 text-red-400 hover:bg-red-950/40 rounded-lg transition-colors cursor-pointer"
                   title="Remove Custom Favicon"
                 >
                   <Trash2 className="w-4 h-4" />

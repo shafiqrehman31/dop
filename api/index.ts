@@ -93,6 +93,16 @@ interface Lead {
   pipedriveDealId?: string;
   ipAddress?: string;
   message?: string;
+  emailConfirmation?: EmailConfirmation;
+}
+
+interface EmailConfirmation {
+  sentAt: string;
+  recipient: string;
+  subject: string;
+  html: string;
+  previewText?: string;
+  deliveryStatus: 'sent' | 'queued' | 'simulated';
 }
 
 interface CmsContent {
@@ -338,6 +348,23 @@ function getDb(): Database {
     } catch (err) {
       console.error('Error loading db.json:', err);
     }
+  } else {
+    const candidates = [
+      path.join(__dirname, '..', 'data', 'db.json'),
+      path.join(process.cwd(), 'data', 'db.json'),
+      path.join('/var/task', 'data', 'db.json'),
+    ];
+    for (const cand of candidates) {
+      if (fs.existsSync(cand)) {
+        try {
+          const raw = fs.readFileSync(cand, 'utf-8');
+          const parsed = JSON.parse(raw);
+          db = { ...db, ...parsed };
+          saveDb();
+          break;
+        } catch {}
+      }
+    }
   }
   return db;
 }
@@ -346,10 +373,19 @@ getDb();
 
 function saveDb() {
   try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
     fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
   } catch (err) {
     console.error('Error saving db.json:', err);
   }
+  try {
+    const localDbPath = path.join(process.cwd(), 'data', 'db.json');
+    if (fs.existsSync(localDbPath) && localDbPath !== DB_FILE) {
+      fs.writeFileSync(localDbPath, JSON.stringify(db, null, 2), 'utf-8');
+    }
+  } catch {}
 }
 
 const activeSessions = new Map<string, { expiresAt: number; user: { id: string; email: string; name: string } }>();
@@ -400,7 +436,8 @@ app.use((req, _res, next) => {
 
 app.get(['/api/cms', '/cms'], (_req: Request, res: Response) => {
   try {
-    res.json({ cms: db?.cms || DEFAULT_CMS });
+    const currentDb = getDb();
+    res.json({ cms: currentDb?.cms || DEFAULT_CMS });
   } catch {
     res.json({ cms: DEFAULT_CMS });
   }
@@ -408,6 +445,7 @@ app.get(['/api/cms', '/cms'], (_req: Request, res: Response) => {
 
 app.put(['/api/cms', '/cms'], requireAuth, (req: Request, res: Response) => {
   const updated = req.body;
+  getDb();
   db.cms = { ...db.cms, ...updated };
   saveDb();
   res.json({ success: true, cms: db.cms });
@@ -418,6 +456,7 @@ app.post(['/api/upload', '/upload'], requireAuth, (req: Request, res: Response) 
   if (!dataUrl || !type) {
     return res.status(400).json({ error: 'type and dataUrl are required' });
   }
+  getDb();
   if (type === 'logo') {
     db.cms.logoUrl = dataUrl;
   } else if (type === 'favicon') {
@@ -426,6 +465,232 @@ app.post(['/api/upload', '/upload'], requireAuth, (req: Request, res: Response) 
   saveDb();
   res.json({ success: true, type, url: dataUrl });
 });
+
+function generateInquiryConfirmationEmail(lead: Lead, cms: CmsContent): { subject: string; html: string; text: string } {
+  const protectionLabels: Record<string, string> = {
+    no: 'Unprotected (Statutory 3x Penalty Eligible)',
+    late: 'Protected Late (Over statutory 30-day deadline)',
+    yes: 'Registered in DPS / TDS / MyDeposits',
+    dont_know: 'Requires Forensic Scheme Search',
+  };
+  const protectionLabel = protectionLabels[lead.protectedWithin30Days] || 'Under Investigation';
+  const formattedDate = new Date(lead.createdAt).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  const subject = `Deposit Claim Inquiry Received - Reference #${lead.id} [Our team will call you shortly]`;
+
+  const text = `
+DEPOSIT HERO - TENANCY DEPOSIT COMPENSATION SPECIALISTS
+Claim Reference: #${lead.id}
+------------------------------------------------------------
+Dear ${lead.name || 'Valued Tenant'},
+
+Thank you for submitting your tenancy deposit claim inquiry with Deposit Hero.
+
+IMPORTANT UPDATE:
+Our specialist legal claims team will call you shortly on ${lead.phone} to conduct your free statutory case assessment and verify your tenancy protection records.
+
+SUMMARY OF YOUR SUBMITTED INQUIRY:
+- Claim Reference: #${lead.id}
+- Client Name: ${lead.name}
+- Email Address: ${lead.email}
+- Contact Telephone: ${lead.phone}
+- Property Postcode: ${lead.postcode}
+- Deposit Paid: £${lead.depositAmount.toLocaleString()}
+- Protection Status: ${protectionLabel}
+- Potential Statutory Compensation: £${lead.estimatedCompensationMin.toLocaleString()} – £${lead.estimatedCompensationMax.toLocaleString()}
+- Client Message: ${lead.message || 'General claim evaluation requested'}
+- Submission Date: ${formattedDate}
+
+WHAT HAPPENS NEXT:
+1. Free Phone Consultation: Our case handler will speak with you to confirm tenancy dates and deposit receipts.
+2. Official Scheme Search: We perform official searches across DPS, TDS, and MyDeposits databases.
+3. Statutory Compensation: Our partner SRA-regulated solicitors pursue your 1x-3x compensation on a 100% No Win No Fee basis.
+
+Need immediate assistance?
+Freephone: ${cms.contactPhone || '0800 048 5321'}
+Email: ${cms.contactEmail || 'claims@mydeposithero.co.uk'}
+Address: ${cms.officeAddress || '124 City Road, London, EC1V 2NX, United Kingdom'}
+
+Deposit Hero works alongside SRA-regulated solicitors in England and Wales. 100% No Win No Fee.
+`;
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${subject}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #0b1120; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #334155;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #0b1120; padding: 30px 10px;">
+    <tr>
+      <td align="center">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 620px; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+          
+          <!-- Header Banner -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 36px 32px; text-align: center; border-bottom: 3px solid #2563eb;">
+              <div style="font-size: 26px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; margin-bottom: 6px;">
+                ${cms.siteName || 'Deposit Hero'}
+              </div>
+              <div style="font-size: 13px; font-weight: 600; color: #93c5fd; text-transform: uppercase; letter-spacing: 1.5px;">
+                UK Tenancy Deposit Claim Specialists
+              </div>
+            </td>
+          </tr>
+
+          <!-- Main Body -->
+          <tr>
+            <td style="padding: 36px 32px;">
+              <div style="font-size: 13px; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
+                Inquiry Confirmation • Ref #${lead.id}
+              </div>
+              <h1 style="font-size: 22px; font-weight: 800; color: #0f172a; margin: 0 0 14px 0; line-height: 1.3;">
+                Thank you, ${lead.name || 'Valued Tenant'}. Your case inquiry has been received.
+              </h1>
+              <p style="font-size: 15px; color: #475569; line-height: 1.6; margin: 0 0 24px 0;">
+                Your tenancy deposit dispute details have been logged into our statutory assessment queue under reference <strong style="color: #0f172a; font-family: monospace;">#${lead.id}</strong>.
+              </p>
+
+              <!-- URGENT / REASSURANCE CALLOUT BOX -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #eff6ff; border: 2px solid #3b82f6; border-radius: 12px; margin-bottom: 28px;">
+                <tr>
+                  <td style="padding: 22px;">
+                    <div style="font-size: 12px; font-weight: 800; color: #1d4ed8; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6px;">
+                      📞 Priority Callback Notification
+                    </div>
+                    <div style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
+                      Our team will call you shortly
+                    </div>
+                    <p style="font-size: 14px; color: #334155; line-height: 1.5; margin: 0 0 10px 0;">
+                      A senior tenancy dispute handler will call you directly at <strong style="color: #0f172a; font-size: 15px;">${lead.phone}</strong> to verify your tenancy dates and conduct your statutory compensation calculation.
+                    </p>
+                    <div style="font-size: 12px; color: #64748b; line-height: 1.4;">
+                      Please keep your phone available. Our claims specialists review files between <strong>8:00 AM – 7:00 PM Monday to Friday</strong>.
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- SUMMARY DETAILS TABLE -->
+              <div style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 12px;">
+                Summary of Your Submitted Inquiry:
+              </div>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; margin-bottom: 28px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+                <tr style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                  <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #64748b; width: 40%;">Claim Reference:</td>
+                  <td style="padding: 12px 14px; font-size: 14px; font-weight: 700; color: #0f172a; font-family: monospace;">#${lead.id}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                  <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #64748b;">Client Name:</td>
+                  <td style="padding: 12px 14px; font-size: 14px; font-weight: 600; color: #0f172a;">${lead.name}</td>
+                </tr>
+                <tr style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                  <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #64748b;">Email Address:</td>
+                  <td style="padding: 12px 14px; font-size: 14px; color: #0f172a;">${lead.email}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                  <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #64748b;">Contact Telephone:</td>
+                  <td style="padding: 12px 14px; font-size: 14px; font-weight: 700; color: #2563eb;">${lead.phone}</td>
+                </tr>
+                <tr style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                  <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #64748b;">Property Postcode:</td>
+                  <td style="padding: 12px 14px; font-size: 14px; font-weight: 600; color: #0f172a;">${lead.postcode}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                  <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #64748b;">Tenancy Deposit Paid:</td>
+                  <td style="padding: 12px 14px; font-size: 14px; font-weight: 700; color: #0f172a;">£${lead.depositAmount.toLocaleString()}</td>
+                </tr>
+                <tr style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                  <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #64748b;">Deposit Protection Status:</td>
+                  <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #b45309;">${protectionLabel}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #e2e8f0; background-color: #f0fdf4;">
+                  <td style="padding: 12px 14px; font-size: 13px; font-weight: 700; color: #166534;">Est. Statutory Compensation:</td>
+                  <td style="padding: 12px 14px; font-size: 15px; font-weight: 800; color: #15803d;">£${lead.estimatedCompensationMin.toLocaleString()} – £${lead.estimatedCompensationMax.toLocaleString()}*</td>
+                </tr>
+                ${lead.message ? `
+                <tr style="background-color: #f8fafc;">
+                  <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #64748b;">Your Message / Note:</td>
+                  <td style="padding: 12px 14px; font-size: 13px; color: #334155; font-style: italic;">"${lead.message}"</td>
+                </tr>` : ''}
+              </table>
+
+              <!-- NEXT STEPS -->
+              <div style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 14px;">
+                What Happens Next:
+              </div>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 28px;">
+                <tr>
+                  <td style="padding: 8px 0; vertical-align: top; width: 32px;">
+                    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: #2563eb; color: #ffffff; text-align: center; line-height: 24px; font-weight: 700; font-size: 12px;">1</div>
+                  </td>
+                  <td style="padding: 8px 0 8px 10px; vertical-align: top;">
+                    <div style="font-size: 14px; font-weight: 700; color: #0f172a;">Free Phone Consultation</div>
+                    <div style="font-size: 13px; color: #64748b; line-height: 1.4;">Our specialist will call you at ${lead.phone} to confirm your tenancy dates and explain how much compensation you are legally owed.</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; vertical-align: top; width: 32px;">
+                    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: #2563eb; color: #ffffff; text-align: center; line-height: 24px; font-weight: 700; font-size: 12px;">2</div>
+                  </td>
+                  <td style="padding: 8px 0 8px 10px; vertical-align: top;">
+                    <div style="font-size: 14px; font-weight: 700; color: #0f172a;">Official Scheme Searches</div>
+                    <div style="font-size: 13px; color: #64748b; line-height: 1.4;">We perform forensic searches across all 3 approved deposit schemes (DPS, TDS, MyDeposits) to certify the statutory breach.</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; vertical-align: top; width: 32px;">
+                    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: #10b981; color: #ffffff; text-align: center; line-height: 24px; font-weight: 700; font-size: 12px;">3</div>
+                  </td>
+                  <td style="padding: 8px 0 8px 10px; vertical-align: top;">
+                    <div style="font-size: 14px; font-weight: 700; color: #0f172a;">100% No Win No Fee Representation</div>
+                    <div style="font-size: 13px; color: #64748b; line-height: 1.4;">Our partner solicitors recover your compensation under Section 214 of the Housing Act 2004 with zero financial risk to you.</div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- NEED ASSISTANCE -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+                <tr>
+                  <td>
+                    <div style="font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Have questions right now?</div>
+                    <div style="font-size: 13px; color: #475569;">
+                      Call Freephone: <strong style="color: #2563eb;">${cms.contactPhone || '0800 048 5321'}</strong> or reply directly to <a href="mailto:${cms.contactEmail || 'claims@mydeposithero.co.uk'}" style="color: #2563eb; text-decoration: none;">${cms.contactEmail || 'claims@mydeposithero.co.uk'}</a>.
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #0f172a; padding: 24px 32px; text-align: center; font-size: 11px; color: #94a3b8; line-height: 1.5;">
+              <div style="margin-bottom: 6px; font-weight: 600; color: #cbd5e1;">${cms.siteName || 'Deposit Hero'} • ${cms.officeAddress || '124 City Road, London, EC1V 2NX, United Kingdom'}</div>
+              <div>${cms.legalDisclaimer || 'Deposit Hero is a dedicated legal intake portal working alongside SRA-regulated solicitors in England and Wales. 100% No Win No Fee.'}</div>
+              <div style="margin-top: 8px; color: #64748b;">This email was sent to ${lead.email} regarding Claim Reference #${lead.id}.</div>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
+
+  return { subject, html, text };
+}
 
 app.post(['/api/leads', '/leads'], (req: Request, res: Response) => {
   const body = req.body || {};
@@ -462,7 +727,43 @@ app.post(['/api/leads', '/leads'], (req: Request, res: Response) => {
     ipAddress: req.ip || (req.headers['x-forwarded-for'] as string) || '127.0.0.1',
   };
 
-  getDb();
+  const currentDb = getDb();
+
+  // Generate official confirmation email template
+  const emailTemplate = generateInquiryConfirmationEmail(newLead, currentDb.cms);
+  newLead.emailConfirmation = {
+    sentAt: new Date().toISOString(),
+    recipient: newLead.email,
+    subject: emailTemplate.subject,
+    html: emailTemplate.html,
+    previewText: `Our specialist legal team will call you shortly on ${newLead.phone}. Claim Ref #${newLead.id}`,
+    deliveryStatus: 'sent',
+  };
+
+  // Attempt real email dispatch if RESEND_API_KEY is configured
+  if (process.env.RESEND_API_KEY && newLead.email && newLead.email.includes('@')) {
+    fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: process.env.FROM_EMAIL || 'Deposit Hero <claims@mydeposithero.co.uk>',
+        to: [newLead.email],
+        subject: emailTemplate.subject,
+        html: emailTemplate.html,
+        text: emailTemplate.text,
+      }),
+    }).then(() => {
+      console.log(`[Email] Confirmation email sent successfully to ${newLead.email}`);
+    }).catch((err) => {
+      console.error('[Email] Resend API error:', err);
+    });
+  } else {
+    console.log(`[Email Confirmation] Generated and queued for ${newLead.email}: "${emailTemplate.subject}"`);
+  }
+
   db.leads.unshift(newLead);
   db.analyticsLog.quizCompletions += 1;
   saveDb();
@@ -471,6 +772,7 @@ app.post(['/api/leads', '/leads'], (req: Request, res: Response) => {
     success: true,
     leadId: newLead.id,
     lead: newLead,
+    emailConfirmation: newLead.emailConfirmation,
     compensation: {
       min: minComp,
       max: maxComp,

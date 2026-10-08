@@ -4,7 +4,7 @@ import {
   LogOut, ExternalLink, Bell, Radio, Check, X, Scale
 } from 'lucide-react';
 import { subscribeToLeadStream, logout } from '../../services/api';
-import { Lead } from '../../types';
+import { Lead, CmsContent } from '../../types';
 
 interface AdminLayoutProps {
   activeTab: 'leads' | 'analytics' | 'cms' | 'crm' | 'security';
@@ -14,6 +14,7 @@ interface AdminLayoutProps {
   children: React.ReactNode;
   newLeadsCount?: number;
   onNewLeadReceived?: (lead: Lead) => void;
+  cms?: CmsContent;
 }
 
 export const AdminLayout: React.FC<AdminLayoutProps> = ({
@@ -24,6 +25,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   children,
   newLeadsCount = 0,
   onNewLeadReceived,
+  cms,
 }) => {
   const [liveConnected, setLiveConnected] = useState(true);
   const [liveNotification, setLiveNotification] = useState<Lead | null>(null);
@@ -78,12 +80,21 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             
             {/* Left: Brand & Portal Badge */}
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
-                <Scale className="w-4 h-4" />
-              </div>
+              {cms?.logoUrl ? (
+                <img
+                  src={cms.logoUrl}
+                  alt={cms.siteName}
+                  className="h-8 w-auto max-w-[150px] object-contain"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
+                  <Scale className="w-4 h-4" />
+                </div>
+              )}
               <div>
                 <span className="font-extrabold text-white text-base tracking-tight font-display">
-                  Deposit Hero
+                  {cms?.siteName || 'Deposit Hero'}
                 </span>
                 <span className="text-[10px] text-blue-400 font-mono ml-2 px-1.5 py-0.5 rounded bg-blue-950 border border-blue-800/80">
                   Legal Admin Portal

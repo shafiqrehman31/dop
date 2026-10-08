@@ -156,7 +156,7 @@ export const EligibilityQuiz: React.FC<EligibilityQuizProps> = ({
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-blue-500" />
             <span className="text-sm font-bold text-white tracking-tight">
-              Deposit Claim Eligibility Checker
+              Deposit Hero Claim Eligibility Checker
             </span>
           </div>
 
@@ -198,6 +198,26 @@ export const EligibilityQuiz: React.FC<EligibilityQuizProps> = ({
                 <p className="text-xs font-mono text-slate-400 bg-slate-950 px-3 py-1.5 rounded-lg inline-block border border-slate-800">
                   Reference: #{submittedLeadId}
                 </p>
+              </div>
+
+              {/* PRIORITY CALLBACK CALLOUT BANNER */}
+              <div className="bg-gradient-to-r from-blue-950/90 to-slate-900 border-2 border-blue-500 rounded-xl p-5 text-left max-w-md mx-auto space-y-1.5 shadow-lg">
+                <div className="text-xs font-extrabold text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping" />
+                  <span>Priority Callback Notification</span>
+                </div>
+                <div className="text-base font-black text-white leading-snug">
+                  Our team will call you shortly on{' '}
+                  <span className="text-blue-400 underline decoration-blue-500 decoration-2 underline-offset-2">
+                    {phone}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  A specialist tenancy dispute handler will contact you directly to verify your tenancy protection records and conduct your statutory compensation calculation.
+                </p>
+                <div className="text-[11px] text-slate-400 pt-1">
+                  Confirmation email also dispatched to <strong className="text-slate-200 font-mono">{email}</strong>.
+                </div>
               </div>
 
               {/* Valuation Banner */}
@@ -760,10 +780,10 @@ export const EligibilityQuiz: React.FC<EligibilityQuizProps> = ({
                         className="mt-0.5 w-4 h-4 rounded border-slate-700 text-blue-600 focus:ring-blue-500"
                       />
                       <span className="text-[11px] text-slate-400 leading-normal">
-                        I confirm the information provided is accurate and consent to Deposit Claim regulated legal partners conducting free tenancy deposit scheme searches on my behalf under a No Win, No Fee agreement.
+                        I confirm the information provided is accurate and consent to Deposit Hero's regulated legal partners conducting free tenancy deposit scheme searches on my behalf under a No Win, No Fee agreement.
                       </span>
                     </label>
-                  </div> 
+                  </div>
 
                   {errorMsg && (
                     <div className="p-3 bg-red-950/60 border border-red-800 rounded-lg text-xs text-red-300">

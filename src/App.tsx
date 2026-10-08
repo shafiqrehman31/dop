@@ -175,6 +175,7 @@ export default function App() {
     if (!adminUser) {
       return (
         <AdminLogin
+          cms={cms}
           onLoginSuccess={(user) => {
             setAdminUser(user);
             loadAdminLeads();

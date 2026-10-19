@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Menu, X, PhoneCall, Scale } from 'lucide-react';
+import { ShieldCheck, Menu, X, Scale } from 'lucide-react';
 import { CmsContent } from '../types';
 
 interface HeaderProps {
@@ -34,7 +34,12 @@ export const Header: React.FC<HeaderProps> = ({ cms, onOpenQuiz, onScrollTo }) =
                 />
               ) : (
                 <div className="flex items-center gap-2.5">
-                  
+                  <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-900/40">
+                    <Scale className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-xl font-bold tracking-tight text-white font-display">
+                    {cms.siteName}
+                  </span>
                 </div>
               )}
             </a>
@@ -76,13 +81,6 @@ export const Header: React.FC<HeaderProps> = ({ cms, onOpenQuiz, onScrollTo }) =
 
           {/* Zone 3: 1-2 primary actions */}
           <div className="hidden sm:flex items-center gap-4">
-            <a
-              href={`tel:${cms.contactPhone}`}
-              className="hidden lg:flex items-center gap-2 text-xs text-slate-300 hover:text-white transition-colors font-medium"
-            >
-              <PhoneCall className="w-3.5 h-3.5 text-blue-400" />
-              <span>{cms.contactPhone}</span>
-            </a>
             <button
               type="button"
               onClick={(e) => {
@@ -170,12 +168,6 @@ export const Header: React.FC<HeaderProps> = ({ cms, onOpenQuiz, onScrollTo }) =
           >
             Contact
           </button>
-          <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-            <span>Freephone Advice</span>
-            <a href={`tel:${cms.contactPhone}`} className="text-blue-400 font-semibold">
-              {cms.contactPhone}
-            </a>
-          </div>
         </div>
       )}
     </header>

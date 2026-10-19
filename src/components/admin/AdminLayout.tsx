@@ -94,7 +94,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               )}
               <div>
                 <span className="font-extrabold text-white text-base tracking-tight font-display">
-                  {cms?.siteName || 'Deposit Hero'}
+                  {cms?.siteName || 'Deposit Claim'}
                 </span>
                 <span className="text-[10px] text-blue-400 font-mono ml-2 px-1.5 py-0.5 rounded bg-blue-950 border border-blue-800/80">
                   Legal Admin Portal

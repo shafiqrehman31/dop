@@ -583,7 +583,7 @@ export const InquiryForm: React.FC<InquiryFormProps> = ({ cms, onSuccessSubmitte
               {/* Branded Email Header */}
               <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 text-center space-y-1">
                 <div className="text-xl font-black text-white font-display tracking-tight">
-                  {cms.siteName || 'Deposit Hero'}
+                  {cms.siteName || 'Deposit Claim'}
                 </div>
                 <div className="text-[11px] font-bold text-blue-400 uppercase tracking-widest">
                   UK Tenancy Deposit Claim Specialists
@@ -596,7 +596,7 @@ export const InquiryForm: React.FC<InquiryFormProps> = ({ cms, onSuccessSubmitte
                   Dear {lastSubmittedLead.name || 'Valued Tenant'},
                 </div>
                 <p className="text-xs text-slate-300 leading-relaxed">
-                  Thank you for submitting your tenancy deposit claim inquiry with {cms.siteName || 'Deposit Hero'}. Your case details have been registered under Claim Reference <strong className="text-white font-mono">#{lastSubmittedLead.id}</strong>.
+                  Thank you for submitting your tenancy deposit claim inquiry with {cms.siteName || 'Deposit Claim'}. Your case details have been registered under Claim Reference <strong className="text-white font-mono">#{lastSubmittedLead.id}</strong>.
                 </p>
               </div>
 
@@ -704,7 +704,7 @@ export const InquiryForm: React.FC<InquiryFormProps> = ({ cms, onSuccessSubmitte
 
               {/* SRA Disclaimer */}
               <div className="text-[10px] text-slate-500 text-center leading-normal pt-1">
-                {cms.legalDisclaimer || 'Deposit Hero is a dedicated legal intake portal working alongside SRA-regulated solicitors in England and Wales. 100% No Win No Fee agreements are subject to solicitor assessment.'}
+                {cms.legalDisclaimer || 'Deposit Claim is a dedicated legal intake portal working alongside SRA-regulated solicitors in England and Wales. 100% No Win No Fee agreements are subject to solicitor assessment.'}
               </div>
 
             </div>

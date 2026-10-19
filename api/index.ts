@@ -153,7 +153,7 @@ interface PipedriveConfig {
 }
 
 const DEFAULT_CMS: CmsContent = {
-  siteName: 'Deposit Hero',
+  siteName: 'Deposit Claim',
   tagline: 'UK Tenancy Deposit Claim Specialists',
   contactEmail: 'Info@mydeposit-claim.co.uk',
   contactPhone: '0800 048 5321',
@@ -238,7 +238,7 @@ const DEFAULT_CMS: CmsContent = {
     },
   ],
   legalDisclaimer:
-    'Deposit Hero is a dedicated legal intake portal working alongside SRA-regulated solicitors in England and Wales. Regulated services are governed by the Solicitors Regulation Authority. 100% No Win No Fee agreements are subject to solicitor assessment.',
+    'Deposit Claim is a dedicated legal intake portal working alongside SRA-regulated solicitors in England and Wales. Regulated services are governed by the Solicitors Regulation Authority. 100% No Win No Fee agreements are subject to solicitor assessment.',
 };
 
 const initialLeads: Lead[] = [
@@ -485,12 +485,12 @@ function generateInquiryConfirmationEmail(lead: Lead, cms: CmsContent): { subjec
   const subject = `Deposit Claim Inquiry Received - Reference #${lead.id} [Our team will call you shortly]`;
 
   const text = `
-DEPOSIT HERO - TENANCY DEPOSIT COMPENSATION SPECIALISTS
+DEPOSIT CLAIM - TENANCY DEPOSIT COMPENSATION SPECIALISTS
 Claim Reference: #${lead.id}
 ------------------------------------------------------------
 Dear ${lead.name || 'Valued Tenant'},
 
-Thank you for submitting your tenancy deposit claim inquiry with Deposit Hero.
+Thank you for submitting your tenancy deposit claim inquiry with Deposit Claim.
 
 IMPORTANT UPDATE:
 Our specialist legal claims team will call you shortly on ${lead.phone} to conduct your free statutory case assessment and verify your tenancy protection records.
@@ -517,7 +517,7 @@ Freephone: ${cms.contactPhone || '0800 048 5321'}
 Email: ${cms.contactEmail || 'Info@mydeposit-claim.co.uk'}
 Address: ${cms.officeAddress || '2 Exchange Quay Manchester M5 3EB'}
 
-Deposit Hero works alongside SRA-regulated solicitors in England and Wales. 100% No Win No Fee.
+Deposit Claim works alongside SRA-regulated solicitors in England and Wales. 100% No Win No Fee.
 `;
 
   const html = `
@@ -538,7 +538,7 @@ Deposit Hero works alongside SRA-regulated solicitors in England and Wales. 100%
           <tr>
             <td style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 36px 32px; text-align: center; border-bottom: 3px solid #2563eb;">
               <div style="font-size: 26px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; margin-bottom: 6px;">
-                ${cms.siteName || 'Deposit Hero'}
+                ${cms.siteName || 'Deposit Claim'}
               </div>
               <div style="font-size: 13px; font-weight: 600; color: #93c5fd; text-transform: uppercase; letter-spacing: 1.5px;">
                 UK Tenancy Deposit Claim Specialists
@@ -675,8 +675,8 @@ Deposit Hero works alongside SRA-regulated solicitors in England and Wales. 100%
           <!-- Footer -->
           <tr>
             <td style="background-color: #0f172a; padding: 24px 32px; text-align: center; font-size: 11px; color: #94a3b8; line-height: 1.5;">
-              <div style="margin-bottom: 6px; font-weight: 600; color: #cbd5e1;">${cms.siteName || 'Deposit Hero'} • ${cms.officeAddress || '2 Exchange Quay Manchester M5 3EB'}</div>
-              <div>${cms.legalDisclaimer || 'Deposit Hero is a dedicated legal intake portal working alongside SRA-regulated solicitors in England and Wales. 100% No Win No Fee.'}</div>
+              <div style="margin-bottom: 6px; font-weight: 600; color: #cbd5e1;">${cms.siteName || 'Deposit Claim'} • ${cms.officeAddress || '2 Exchange Quay Manchester M5 3EB'}</div>
+              <div>${cms.legalDisclaimer || 'Deposit Claim is a dedicated legal intake portal working alongside SRA-regulated solicitors in England and Wales. 100% No Win No Fee.'}</div>
               <div style="margin-top: 8px; color: #64748b;">This email was sent to ${lead.email} regarding Claim Reference #${lead.id}.</div>
             </td>
           </tr>
@@ -749,7 +749,7 @@ app.post(['/api/leads', '/leads'], (req: Request, res: Response) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: process.env.FROM_EMAIL || 'Deposit Hero <Info@mydeposit-claim.co.uk>',
+        from: process.env.FROM_EMAIL || 'Deposit Claim <Info@mydeposit-claim.co.uk>',
         to: [newLead.email],
         subject: emailTemplate.subject,
         html: emailTemplate.html,

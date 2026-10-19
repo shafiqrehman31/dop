@@ -69,7 +69,7 @@ export interface CmsContent {
 }
 
 export const DEFAULT_CMS: CmsContent = {
-  siteName: 'Deposit Hero',
+  siteName: 'Deposit Claim',
   tagline: 'UK Tenancy Deposit Claim Specialists',
   contactEmail: 'Info@mydeposit-claim.co.uk',
   contactPhone: '0800 048 5321',
@@ -143,7 +143,7 @@ export const DEFAULT_CMS: CmsContent = {
       answer: 'Under the Limitation Act 1980, you have up to 6 years from the date your deposit should have been protected (30 days after you paid it) to bring a claim, even if you moved out years ago.',
     },
   ],
-  legalDisclaimer: 'Deposit Hero is a dedicated legal intake portal working alongside SRA-regulated solicitors in England and Wales. Regulated services are governed by the Solicitors Regulation Authority. 100% No Win No Fee agreements are subject to solicitor assessment.',
+  legalDisclaimer: 'Deposit Claim is a dedicated legal intake portal working alongside SRA-regulated solicitors in England and Wales. Regulated services are governed by the Solicitors Regulation Authority. 100% No Win No Fee agreements are subject to solicitor assessment.',
 };
 
 export interface PipedriveConfig {

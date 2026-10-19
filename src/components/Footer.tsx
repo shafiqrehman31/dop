@@ -162,9 +162,7 @@ export const Footer: React.FC<FooterProps> = ({ cms, onScrollTo, onOpenQuiz, onO
             <div className="font-semibold text-white uppercase tracking-wider text-[11px]">
               Direct Contact
             </div>
-            <p className="text-xs text-slate-300">
-              Freephone Tenant Advice: <a href={`tel:${cms.contactPhone}`} className="text-blue-400 font-bold hover:underline">{cms.contactPhone}</a>
-            </p>
+
             <p className="text-xs text-slate-300">
               Email: <a href={`mailto:${cms.contactEmail}`} className="text-blue-400 hover:underline">{cms.contactEmail}</a>
             </p>

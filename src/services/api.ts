@@ -27,6 +27,12 @@ export function getCachedCms(): CmsContent | null {
     const raw = localStorage.getItem(CMS_STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
+      if (parsed.officeAddress && parsed.officeAddress.includes('124 City Road')) {
+        parsed.officeAddress = DEFAULT_CMS.officeAddress;
+      }
+      if (parsed.contactEmail && (parsed.contactEmail.includes('claims@mydeposithero') || parsed.contactEmail.includes('claims@mydeposit-claim'))) {
+        parsed.contactEmail = DEFAULT_CMS.contactEmail;
+      }
       return { ...DEFAULT_CMS, ...parsed };
     }
   } catch {}
@@ -55,6 +61,12 @@ export async function getCms(): Promise<CmsContent> {
       ...serverCms,
       ...(cached || {}),
     };
+    if (merged.officeAddress && merged.officeAddress.includes('124 City Road')) {
+      merged.officeAddress = DEFAULT_CMS.officeAddress;
+    }
+    if (merged.contactEmail && (merged.contactEmail.includes('claims@mydeposithero') || merged.contactEmail.includes('claims@mydeposit-claim'))) {
+      merged.contactEmail = DEFAULT_CMS.contactEmail;
+    }
     saveCachedCms(merged);
     return merged;
   } catch (err) {

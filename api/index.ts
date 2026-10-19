@@ -155,9 +155,9 @@ interface PipedriveConfig {
 const DEFAULT_CMS: CmsContent = {
   siteName: 'Deposit Hero',
   tagline: 'UK Tenancy Deposit Claim Specialists',
-  contactEmail: 'claims@mydeposithero.co.uk',
+  contactEmail: 'Info@mydeposit-claim.co.uk',
   contactPhone: '0800 048 5321',
-  officeAddress: '124 City Road, London, EC1V 2NX, United Kingdom',
+  officeAddress: '2 Exchange Quay Manchester M5 3EB',
   heroBadge: 'Regulated Tenancy Deposit Recovery Specialists',
   heroHeadline: 'Claim up to 3x your tenancy deposit compensation.',
   heroSubtitle:
@@ -514,8 +514,8 @@ WHAT HAPPENS NEXT:
 
 Need immediate assistance?
 Freephone: ${cms.contactPhone || '0800 048 5321'}
-Email: ${cms.contactEmail || 'claims@mydeposithero.co.uk'}
-Address: ${cms.officeAddress || '124 City Road, London, EC1V 2NX, United Kingdom'}
+Email: ${cms.contactEmail || 'Info@mydeposit-claim.co.uk'}
+Address: ${cms.officeAddress || '2 Exchange Quay Manchester M5 3EB'}
 
 Deposit Hero works alongside SRA-regulated solicitors in England and Wales. 100% No Win No Fee.
 `;
@@ -663,7 +663,7 @@ Deposit Hero works alongside SRA-regulated solicitors in England and Wales. 100%
                   <td>
                     <div style="font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Have questions right now?</div>
                     <div style="font-size: 13px; color: #475569;">
-                      Call Freephone: <strong style="color: #2563eb;">${cms.contactPhone || '0800 048 5321'}</strong> or reply directly to <a href="mailto:${cms.contactEmail || 'claims@mydeposithero.co.uk'}" style="color: #2563eb; text-decoration: none;">${cms.contactEmail || 'claims@mydeposithero.co.uk'}</a>.
+                      Call Freephone: <strong style="color: #2563eb;">${cms.contactPhone || '0800 048 5321'}</strong> or reply directly to <a href="mailto:${cms.contactEmail || 'Info@mydeposit-claim.co.uk'}" style="color: #2563eb; text-decoration: none;">${cms.contactEmail || 'Info@mydeposit-claim.co.uk'}</a>.
                     </div>
                   </td>
                 </tr>
@@ -675,7 +675,7 @@ Deposit Hero works alongside SRA-regulated solicitors in England and Wales. 100%
           <!-- Footer -->
           <tr>
             <td style="background-color: #0f172a; padding: 24px 32px; text-align: center; font-size: 11px; color: #94a3b8; line-height: 1.5;">
-              <div style="margin-bottom: 6px; font-weight: 600; color: #cbd5e1;">${cms.siteName || 'Deposit Hero'} • ${cms.officeAddress || '124 City Road, London, EC1V 2NX, United Kingdom'}</div>
+              <div style="margin-bottom: 6px; font-weight: 600; color: #cbd5e1;">${cms.siteName || 'Deposit Hero'} • ${cms.officeAddress || '2 Exchange Quay Manchester M5 3EB'}</div>
               <div>${cms.legalDisclaimer || 'Deposit Hero is a dedicated legal intake portal working alongside SRA-regulated solicitors in England and Wales. 100% No Win No Fee.'}</div>
               <div style="margin-top: 8px; color: #64748b;">This email was sent to ${lead.email} regarding Claim Reference #${lead.id}.</div>
             </td>
@@ -749,7 +749,7 @@ app.post(['/api/leads', '/leads'], (req: Request, res: Response) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: process.env.FROM_EMAIL || 'Deposit Hero <claims@mydeposithero.co.uk>',
+        from: process.env.FROM_EMAIL || 'Deposit Hero <Info@mydeposit-claim.co.uk>',
         to: [newLead.email],
         subject: emailTemplate.subject,
         html: emailTemplate.html,

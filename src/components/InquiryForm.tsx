@@ -150,19 +150,6 @@ export const InquiryForm: React.FC<InquiryFormProps> = ({ cms, onSuccessSubmitte
             <div className="space-y-4 pt-4 border-t border-slate-800 text-sm">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-blue-900/40 text-blue-400 flex items-center justify-center shrink-0 mt-0.5">
-                  <Phone className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-xs text-slate-400">Tenant Advice Line:</div>
-                  <a href={`tel:${cms.contactPhone}`} className="font-bold text-white hover:text-blue-400 transition-colors">
-                    {cms.contactPhone}
-                  </a>
-                  <div className="text-[11px] text-slate-400">Monday - Friday, 9:00am - 6:00pm</div>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-blue-900/40 text-blue-400 flex items-center justify-center shrink-0 mt-0.5">
                   <Mail className="w-4 h-4" />
                 </div>
                 <div>
@@ -178,7 +165,7 @@ export const InquiryForm: React.FC<InquiryFormProps> = ({ cms, onSuccessSubmitte
                   <MapPin className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-xs text-slate-400">London Consultation Office:</div>
+                  <div className="text-xs text-slate-400">Consultation Office:</div>
                   <div className="text-slate-200">{cms.officeAddress}</div>
                 </div>
               </div>
@@ -708,10 +695,10 @@ export const InquiryForm: React.FC<InquiryFormProps> = ({ cms, onSuccessSubmitte
                   Freephone: <strong className="text-white">{cms.contactPhone || '0800 048 5321'}</strong>
                 </div>
                 <div>
-                  Email: <strong className="text-white">{cms.contactEmail || 'claims@mydeposithero.co.uk'}</strong>
+                  Email: <strong className="text-white">{cms.contactEmail || 'Info@mydeposit-claim.co.uk'}</strong>
                 </div>
                 <div>
-                  London: <span className="text-slate-300">{cms.officeAddress || '124 City Road, EC1V 2NX'}</span>
+                  Office: <span className="text-slate-300">{cms.officeAddress || '2 Exchange Quay Manchester M5 3EB'}</span>
                 </div>
               </div>
 

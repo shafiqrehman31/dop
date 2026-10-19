@@ -23,6 +23,16 @@ export interface Lead {
   pipedriveDealId?: string;
   ipAddress?: string;
   message?: string;
+  emailConfirmation?: EmailConfirmation;
+}
+
+export interface EmailConfirmation {
+  sentAt: string;
+  recipient: string;
+  subject: string;
+  html: string;
+  previewText?: string;
+  deliveryStatus: 'sent' | 'queued' | 'simulated';
 }
 
 export interface CmsContent {
@@ -61,9 +71,9 @@ export interface CmsContent {
 export const DEFAULT_CMS: CmsContent = {
   siteName: 'Deposit Hero',
   tagline: 'UK Tenancy Deposit Claim Specialists',
-  contactEmail: 'claims@mydeposithero.co.uk',
+  contactEmail: 'Info@mydeposit-claim.co.uk',
   contactPhone: '0800 048 5321',
-  officeAddress: '124 City Road, London, EC1V 2NX, United Kingdom',
+  officeAddress: '2 Exchange Quay Manchester M5 3EB',
   heroBadge: 'Regulated Tenancy Deposit Recovery Specialists',
   heroHeadline: 'Claim up to 3x your tenancy deposit compensation.',
   heroSubtitle: 'Under the UK Housing Act 2004, if your landlord failed to protect your deposit in an approved scheme within 30 days or provide prescribed information, you could be legally owed £1,000s in compensation. 100% No Win No Fee.',
